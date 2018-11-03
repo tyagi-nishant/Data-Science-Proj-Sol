@@ -27,7 +27,7 @@
 # 
 # The data you have been given is near **Noida, Uttar Pradesh, India**, and the stations the data comes from are shown on the map below.
 
-# In[2]:
+# In[1]:
 
 import matplotlib.pyplot as plt
 import mplleaflet
@@ -51,14 +51,14 @@ def leaflet_plot_stations(binsize, hashid):
 leaflet_plot_stations(25,'391a2922ad597ba080f4b99dea6d62842562d64845ef5df1a384561e')
 
 
-# In[43]:
+# In[3]:
 
 get_ipython().magic('matplotlib notebook')
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 data = pd.read_csv('data/C2A2_data/BinnedCsvs_d25/391a2922ad597ba080f4b99dea6d62842562d64845ef5df1a384561e.csv')
-data=data.dropna(if 'Date' contains)
+#data=data.dropna(if 'Date' contains)
 data2015=data.where(data['Date'].str.contains('2015')).dropna()
 data2015['Date']=data2015.Date.str[5:]
 print (data2015.head())

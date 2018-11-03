@@ -1,0 +1,72 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+%matplotlib notebook
+
+# generate 4 random variables from the normal, gamma, exponential, and uniform distributions
+x1 = np.random.normal(-2.5, 1, 10000)
+x2 = np.random.gamma(2, 1.5, 10000)
+x3 = np.random.exponential(2, 10000)+7
+x4 = np.random.uniform(14,20, 10000)
+
+# plot the histograms
+plt.figure(figsize=(9,3))
+plt.hist(x1, normed=True, bins=20, alpha=0.5)
+plt.hist(x2, normed=True, bins=20, alpha=0.5)
+plt.hist(x3, normed=True, bins=20, alpha=0.5)
+plt.hist(x4, normed=True, bins=20, alpha=0.5);
+plt.axis([-7,21,0,0.6])
+
+plt.text(x1.mean()-1.5, 0.5, 'x1\nNormal')
+plt.text(x2.mean()-1.5, 0.5, 'x2\nGamma')
+plt.text(x3.mean()-1.5, 0.5, 'x3\nExponential')
+plt.text(x4.mean()-1.5, 0.5, 'x4\nUniform')
+
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.animation as animation
+%matplotlib notebook
+
+# Generating 4 random variables from the normal, gamma, exponential, and uniform distributions
+x1 = np.random.normal(-2.5, 1, 10000)
+x2 = np.random.gamma(2, 1.5, 10000)
+x3 = np.random.exponential(2, 10000)
+x4 = np.random.uniform(14, 20, 10000)
+x = [x1, x2, x3, x4]
+
+# Creating a 2x2 grid of axis subplots
+fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharey=True)
+ax = [ax1, ax2, ax3, ax4]
+# Defining the axis
+axis1 = [-7, 2, 0, 0.6]
+axis2 = [0, 15, 0, 0.6]
+axis3 = [0, 15, 0, 0.6]
+axis4 = [14, 20, 0, 0.6]
+axes = [axis1, axis2, axis3, axis4]
+# Denining the x coordinates for the annotations
+ann_x = [-1, 10, 10, 18]
+# Adding titles
+titles = ['Normal', 'Gamma', 'Exponential', 'Uniform']
+# Defining an animation
+def update(curr):
+    # Check if the animation is at the last frame, and if so, stop the animation
+    if curr == 100: # Stopping the animation at 100*100 samples
+        a.event_source.stop()
+    # For each of the 4 plots
+    for i in range(len(ax)):
+        # Clear the figure
+        ax[i].cla()
+        # Defining title and axses labels
+        ax[i].set_title(titles[i])
+        ax[i].set_ylabel('Normed Frequency')
+        ax[i].set_xlabel('Value')
+        # Creating the axes
+        ax[i].axis(axes[i])
+        # Defining the histograms (starting the animation at 100 samples)
+        ax[i].hist(x[i][:100*curr], normed = True, bins=50)
+        # Adding a notation about the sample size
+        ax[i].annotate('n = {}'.format(100*curr), [ann_x[i], 0.5])
+    # Creating enough space between the plots
+    plt.tight_layout()
+# Creating the annimation (the interval between updates is set at 100 milliseconds)
+a = animation.FuncAnimation(fig, update, interval=100)
