@@ -1,0 +1,71 @@
+sityagi@sityagi-X1Yoga MINGW64 ~
+$ pwd
+/c/Users/sityagi
+
+sityagi@sityagi-X1Yoga MINGW64 ~
+$ cd Desktop/
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop
+$ cd TRASH
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH
+$ pwd
+/c/Users/sityagi/Desktop/TRASH
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH
+$ git clone https://github.com/tyagi-nishant/Data-Science-Proj-Sol.git
+Cloning into 'Data-Science-Proj-Sol'...
+remote: Enumerating objects: 75, done.
+remote: Counting objects: 100% (75/75), done.
+remote: Compressing objects: 100% (58/58), done.
+remote: Total 75 (delta 10), reused 73 (delta 8), pack-reused 0
+Unpacking objects: 100% (75/75), done.
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH
+$ pwd
+/c/Users/sityagi/Desktop/TRASH
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH
+$ git status
+fatal: Not a git repository (or any of the parent directories): .git
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH
+$ cd Data-Science-Proj-Sol/
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH/Data-Science-Proj-Sol (master)
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+nothing to commit, working tree clean
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH/Data-Science-Proj-Sol (master)
+$ pwd
+/c/Users/sityagi/Desktop/TRASH/Data-Science-Proj-Sol
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH/Data-Science-Proj-Sol (master)
+$
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH/Data-Science-Proj-Sol (master)
+$
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH/Data-Science-Proj-Sol (master)
+$ git branch
+* master
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH/Data-Science-Proj-Sol (master)
+$ git checkout -b dev/sidtyagi/test_branch
+Switched to a new branch 'dev/sidtyagi/test_branch'
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH/Data-Science-Proj-Sol (dev/sidtyagi/test_branch)
+$ git branch
+* dev/sidtyagi/test_branch
+  master
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH/Data-Science-Proj-Sol (dev/sidtyagi/test_branch)
+$
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH/Data-Science-Proj-Sol (dev/sidtyagi/test_branch)
+$
+
+sityagi@sityagi-X1Yoga MINGW64 ~/Desktop/TRASH/Data-Science-Proj-Sol (dev/sidtyagi/test_branch)
+$
