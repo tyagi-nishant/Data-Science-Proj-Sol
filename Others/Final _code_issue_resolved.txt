@@ -1,0 +1,1264 @@
+import matplotlib.pyplot as plt
+from openpyxl import load_workbook
+import openpyxl as op
+import numpy as np
+import pandas as pd
+import xlrd
+import xlwt
+import xlsxwriter
+import os.path
+
+         
+#Dictionary Part
+
+import os
+path="C:\CIQ_Audit\Airscale"
+files=os.listdir(path)
+dict={}
+i=0
+for name in files:
+    if ("Airscale" in name):
+        #print (name+"File is being put into directory")
+        
+        dict["key"+str(i)]=name
+        i+=1
+k=len(dict)
+k1=0
+
+print('Hi1')
+for k1 in range(0,k):
+    key="key"+str(k1)
+    b="\ ".strip()
+    newkey= "C:\CIQ_Audit\Airscale"+b+dict[key]
+    print (dict[key])
+    
+#CIQ Audit For Airscale
+    F1_= pd.ExcelFile(newkey)
+    F2_= pd.ExcelFile("C:\\CIQ_Audit\\Airscale\\Output.xlsx")
+    len1=len(F1_.sheet_names)
+    len2=len(F2_.sheet_names)
+    sheetname1=list(range(0,len1))
+    sheetname2=list(range(0,len1))
+    F1= pd.read_excel(newkey,sheet_name=sheetname1)
+    F2= pd.read_excel(r"C:\CIQ_Audit\Airscale\Output.xlsx",sheet_name=sheetname2)
+    F2_e = op.load_workbook(r'C:\CIQ_Audit\Airscale\Output.xlsx')
+    F1_e = op.load_workbook(newkey)
+    print('hi2')
+    for name in files:
+        if ("sprintvision" in name):
+            sv_dump=("C:\CIQ_Audit\Airscale"+b+name)
+    F3= pd.read_csv(sv_dump,low_memory=False)
+    for name in files:
+        if ("NSN ASCL TDD" in name):
+            nsn_tdd=("C:\CIQ_Audit\Airscale"+b+name)
+
+    print('hi3')
+    F5_=pd.ExcelFile(nsn_tdd)
+    F4_= pd.ExcelFile(r"C:\CIQ_Audit\Airscale\location update sheet.xlsx")
+    len5=len(F5_.sheet_names)
+    len4=len(F4_.sheet_names)
+    sheetname5=list(range(0,len5))
+    sheetname4=list(range(0,len4))
+    F4= pd.read_excel("C:\CIQ_Audit\Airscale\location update sheet.xlsx",sheet_name=sheetname4)
+    F5= pd.read_excel(nsn_tdd,sheet_name=sheetname5)
+    F6=pd.read_excel("C:\CIQ_Audit\Airscale\EARFCN.xlsx",header=(0,1), index_col=None)
+    
+
+# Checking Cascade ID
+    cs="A"
+    cs2="B"
+    csint=cs+str(k1+2)
+    csint2=cs2+str(k1+2)
+    F2_e["eNodeB Def"][csint]=F1[0]["Cascade_ID"][0]
+    F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    cas1=[]
+    print('hi4')
+    for sht in range(0,len1):
+        
+        chk=0
+        for col in range(0,len(F1[sht]["Cascade_ID"])):
+            if F1[sht]["Cascade_ID"][col]==F1[0]["Cascade_ID"][0]:
+                pass
+            else: 
+                chk=1
+                a=(F2_.sheet_names[sht])
+                cas1.append(a)
+                F2_e["eNodeB Def"][csint2]=str(cas1)
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+        if chk==0:  
+            F2_e["eNodeB Def"][csint2]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+# Checking eNB ID
+    print('hi5')
+    en="C"
+    enint=en+str(k1+2)
+   
+    l1=[]
+    
+    for sht in range(1,len1):
+        chk=0
+        for col in range(0,len(F1[sht]["enbName"])): 
+            if F1[sht]["enbName"][col]==F1[0]["enb_Name"][0]:
+
+                pass
+            else:
+                chk=1
+                a=(F2_.sheet_names[sht])
+                l1.append(a)
+                
+                F2_e["eNodeB Def"][enint]=str(l1)
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                
+        if chk==0:       
+            F2_e["eNodeB Def"][enint]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+#Checking_lnBTSId
+    print('hi6')
+    mg="D"
+    mgint=mg+str(k1+2)
+    
+    for sht in range(2,len1): 
+        if(str(F1[0]["lnBTSId"][0])==str(F1[0]["enb_Name"][0][15:])) or str(F1[0]["lnBTSId"][0])==str(F1[0]["enb_Name"][0][16:]):
+            F2_e["eNodeB Def"][mgint]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eNodeB Def"][mgint]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+# Updating the No_Of_2_5_LTE_Carriers
+    print('hi7')
+    kp='G'
+    kpint=kp+str(k1+2)
+    
+    for sht in range(3,len1):
+        a1=F1[1]["earfcnDL"].unique()
+        if F1[0]['No_Of_2_5_LTE_Carriers'][0]==len(a1):
+            F2_e["eNodeB Def"][kpint]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eNodeB Def"][kpint]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+# Updating the Act_DL_CXR_Agxn
+    print('hi8')
+    rp='E'
+    rpint=rp+str(k1+2)
+    
+    for sht in range(4,len1):
+        
+        if F1[0]['No_Of_2_5_LTE_Carriers'][0]>1 and F1[0]['Act_DL_CXR_Agxn'][0]:
+            F2_e["eNodeB Def"][rpint]="OK"
+            F2_e.save(r"C:\\CIQ_Audit\\Airscale\\Output.xlsx")
+        else:
+            F2_e["eNodeB Def"][rpint]="NOK"
+            F2_e.save(r"C:\\CIQ_Audit\\Airscale\\Output.xlsx")
+
+# Updating the Frame_Config
+    print('hi9')
+    sf='F'
+    sfint=sf+str(k1+2)
+    print('hi8')
+    for sht in range(4,len1):
+        
+        if F1[0]['Frame_Config'][0]==2:
+            F2_e["eNodeB Def"][sfint]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eNodeB Def"][sfint]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+
+# Updating the location
+        print('hi10')
+        loc1=(F1[0]["Cascade_ID"][0])
+        if (F1[1]["bandNumber"][0]=="Band 41"):
+            loc2="TDD"
+        else:
+            loc2="FDD"
+        if ((str(F1[2]["CDMA_cellID"][0]))=='nan' or (str(F1[2]["CDMA_cellID"][0]))=="0000" or (str(F1[2]["CDMA_cellID"][0]))=="000" or (str(F1[2]["CDMA_cellID"][0]))=="00" or (str(F1[2]["CDMA_cellID"][0]))=="0"):
+            loc3="1111"
+        elif (len(str(F1[2]["CDMA_cellID"][0])))==2:
+            loc3="00"+(str(F1[2]["CDMA_cellID"][0]))
+ 
+        elif (len(str(F1[2]["CDMA_cellID"][0])))==3:
+            loc3="0"+(str(F1[2]["CDMA_cellID"][0]))
+        elif (len(str(F1[2]["CDMA_cellID"][0])))==4:
+            loc3=(str(F1[2]["CDMA_cellID"][0]))
+        else:
+            loc='1111'
+            
+        k=0
+        
+        print('hi11')
+        F4_len=len(F4[0]["SAT CLLI"])
+        for i in range(0, (len(F5[0]["Cascade Id"]))):
+            if F1[0]["Cascade_ID"][0]==F5[0]["Cascade Id"][i]:
+                schd=F5[0]["Schedule Name"][i]
+                break
+        
+        print('hi12')
+        loc4=""
+        for i in range(0, (len(F3.loc[:,"S:Cascade ID"]))):
+            if (F1[0]["Cascade_ID"][0]==F3.loc[:,"S:Cascade ID"][i]  and F3.loc[:,"AG:SMS Schedule Name"][i]==schd and F3.loc[:,"RSEC:Band "][i]=="2500 MHz"):
+                loc4=F3.loc[:,"S:4G/NNI CLLI"][i]
+                break
+        n=-1
+        i=0
+        print('hi13')
+        for i in range(0,F4_len):
+            if (F4[0]["SAT CLLI"][i][:-3]==loc4):
+                
+            
+                n=i
+        if n==-1:
+            pass
+            print ("no cascade match")
+        else:
+            loc5=F4[0]["Concat"][n]
+            loc_update=loc1+"_"+loc2+"_"+loc3+"_"+loc5
+
+            F1_e["eNodeB Def"]['F2']=loc_update
+            F1_e.save(newkey)
+            
+#### SHEET 2(eNodeB Cell) verification
+
+#updateing the lnCellId and Cell Name:
+    print('hi14')
+    mn1="A"
+    mn2="B"
+    mn3="C"
+    
+    mn1int=mn1+str(k1+2)
+    mn2int=mn2+str(k1+2)
+    mn3int=mn3+str(k1+2)
+    F2_e["eNodeB Cell"][mn1int]=F1[1]["Cascade_ID"][0]
+    F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    
+    lncol=[]
+    cellcol=[]
+    for col in range(0,len(F1[1]["lnCellId"])):        
+        if F1[1]["lnCellId"][col]==49 or F1[1]["lnCellId"][col]==50 or F1[1]["lnCellId"][col]==51:
+            lncol.append("1")
+        elif F1[1]["lnCellId"][col]==57 or F1[1]["lnCellId"][col]==58 or F1[1]["lnCellId"][col]==59:
+            lncol.append("2")
+        elif F1[1]["lnCellId"][col]==65 or F1[1]["lnCellId"][col]==66 or F1[1]["lnCellId"][col]==67:
+            lncol.append("3")
+    for col in range(0,len(F1[1]["cellName"])):        
+        if F1[1]["cellName"][col][-2:]=="17" or F1[1]["cellName"][col][-2:]=="27" or F1[1]["cellName"][col][-2:]=="37":
+            cellcol.append("1")
+        elif F1[1]["cellName"][col][-2:]=="18" or F1[1]["cellName"][col][-2:]=="28" or F1[1]["cellName"][col][-2:]=="38":
+            cellcol.append("2")
+        elif F1[1]["cellName"][col][-2:]=="19" or F1[1]["cellName"][col][-2:]=="29" or F1[1]["cellName"][col][-2:]=="39":
+            cellcol.append("3")
+    
+    for col in range(0,len(F1[1]["lnCellId"])):
+        
+        if lncol[col]==cellcol[col]:
+            F2_e["eNodeB Cell"][mn2int]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            F2_e["eNodeB Cell"][mn3int]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eNodeB Cell"][mn2int]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            F2_e["eNodeB Cell"][mn3int]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            break
+            
+    ## Checking TAC Column
+    print('hi15')
+    tn="E"
+    tnint=tn+str(k1+2)
+    if len((F1[1]["tac"]).unique())==1:
+        F2_e["eNodeB Cell"][tnint]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["eNodeB Cell"][tnint]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+         
+ 
+    ## Checking ANtenna Config Column 
+    print('hi16')
+    an="D"
+    anint=an+str(k1+2)
+    for i in range(0, (len(F5[0]["Cascade Id"]))):
+        if F1[0]["Cascade_ID"][0]==F5[0]["Cascade Id"][i]:
+            schd2=F5[0]["Schedule Name"][i]
+            break
+    
+        
+    print('hi17')   
+    for i in range(0, (len(F3.loc[:,"S:Cascade ID"]))):
+        if (F1[0]["Cascade_ID"][0]==F3.loc[:,"S:Cascade ID"][i] and F3.loc[:,"RSEC:Band "][i]=="2500 MHz" and F3.loc[:,"AG:SMS Schedule Name"][i]==schd2 ): 
+            k=F3.loc[:,"RSEC:Radio Configuration"][i]
+    try:
+        if F1[1]["Antenna_Config"].unique() ==k:
+            F2_e["eNodeB Cell"][anint]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eNodeB Cell"][anint]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    except:
+        F2_e["eNodeB Cell"][anint]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+            
+                
+# Updating the bandNumber
+
+    print('hi18')
+    kk='G'
+    kkint=kk+str(k1+2)
+    if len((F1[1]['bandNumber']).unique())==1 and (F1[1]['bandNumber'][0])=="Band 41":
+        F2_e["eNodeB Cell"][kkint]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["eNodeB Cell"][kkint]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx") 
+        
+### Updating the phyCellId
+    print('hi19')
+    mx=[]
+    nx=[]
+    ph="F"
+    
+    phint=ph+str(k1+2)
+    for col in range(0,len(F1[1]["cellName"])):
+        mx.append(F1[1]["cellName"][col][-2])
+    max_sec=int(max(mx))
+    print ("Sec",max_sec)
+    for col in range(0,len(F1[1]["cellName"])):
+        nx.append(F1[1]["cellName"][col][-1])
+    max_carr=len(set(nx))
+    print ("carr",max_carr)
+    if max_sec==1:
+        if len(F1[1]["cellName"].unique())==1 :
+            F2_e["eNodeB Cell"][phint]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eNodeB Cell"][phint]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+            
+
+        
+    elif max_sec==2:
+        if len(F1[1]["cellName"].unique())==2 :
+            F2_e["eNodeB Cell"][phint]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eNodeB Cell"][phint]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+        
+     
+    elif max_sec==3:
+        if len(F1[1]["cellName"].unique())==3 :
+            F2_e["eNodeB Cell"][phint]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eNodeB Cell"][phint]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+            
+    tot=len(F1[1]["phyCellId"])  ##Checking the symmetry part
+    print ("tot",tot)
+    if tot==1:
+        if max_sec ==1 and max_carr==1:
+            pass
+    if tot==2:
+        if max_sec ==1 and max_carr==2:
+            if F1[1]["phyCellId"][0]==F1[1]["phyCellId"][1]:
+                F2_e["eNodeB Cell"][phint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][phint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                
+
+            
+        elif max_sec ==2 and max_carr==1:
+            if F1[1]["phyCellId"][0]!=F1[1]["phyCellId"][1]:
+                F2_e["eNodeB Cell"][phint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][phint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                
+    if tot==3:
+        if max_sec ==1 and max_carr==3:
+            if F1[1]["phyCellId"][0]==F1[1]["phyCellId"][1]==F1[1]["phyCellId"][2]:
+                F2_e["eNodeB Cell"][phint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][phint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                
+            if max_sec ==3 and max_carr==1:
+                if F1[1]["phyCellId"][0]!=F1[1]["phyCellId"][1]!=F1[1]["phyCellId"][2]:
+                    F2_e["eNodeB Cell"][phint]="OK"
+                    F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                else:
+                    F2_e["eNodeB Cell"][phint]="NOK"
+                    F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                    
+    if tot==6:    
+        if max_sec ==2 and max_carr==3:
+            for col in range(0,len(F1[1]["phyCellId"])): 
+                print ("F1[1][phyCellId][col]",F1[1]["phyCellId"][col])
+                if F1[1]["lnCellId"][col]==49:
+                    a1=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==57:
+                    a2=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==65:
+                    a3=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==50:
+                    b1=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==58:
+                    b2=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==66:
+                    b3=F1[1]["phyCellId"][col]
+            if a1==a2==a3 and b1==b2==b3 and a1!=b1:
+                F2_e["eNodeB Cell"][phint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][phint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+
+        if max_sec ==3 and max_carr==2:
+            print ("sec3 carr2")
+            for col in range(0,len(F1[1]["phyCellId"])): 
+                if F1[1]["lnCellId"][col]==49:
+                    a1=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==57:
+                    a2=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==50:
+                    b1=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==58:
+                    b2=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==51:
+                    c1=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==59:
+                    c2=F1[1]["phyCellId"][col]
+            if a1==a2 and b1==b2 and c1==c2 and a1!=b1!=c1:
+                print ("if","a1",a1,"a2",a2,"b1",b1,"b2",b2,"c1",c1,"c2",c2)
+                F2_e["eNodeB Cell"][phint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                print ("else","a1",a1,"a2",a2,"b1",b1,"b2",b2,"c1",c1,"c2",c2)
+                F2_e["eNodeB Cell"][phint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+            
+    if tot==9 or tot>9: 
+        print ("max_sec",max_sec,"max_carr",max_carr)
+        print (max_sec=="3")
+        print (type(max_carr))
+        print ('F1[1]["lnCellId"][col]',type(F1[1]["lnCellId"][0]))
+        if ((max_sec ==3) and (max_carr==3)):
+            print ("max")
+            for col in range(9):
+                print ("true2")
+                if F1[1]["lnCellId"][col]==49:
+                    a1=F1[1]["phyCellId"][col]   
+                if F1[1]["lnCellId"][col]==57:
+                    a2=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==65:
+                    a3=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==50:
+                    b1=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==58:
+                    b2=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==66:
+                    b3=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==51:
+                    c1=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==59:
+                    c2=F1[1]["phyCellId"][col]
+                if F1[1]["lnCellId"][col]==67:
+                    c3=F1[1]["phyCellId"][col]
+ 
+            if a1==a2==a3 and b1==b2==b3 and c1==c2==c3 and a1!=b1!=c1:
+                print ("if","a1",a1,"a2",a2,"a3",a3,"b1",b1,"b2",b2,"b3",b3,"c1",c1,"c2",c2,"c3",c3)
+                F2_e["eNodeB Cell"][phint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                print ("else","a1",a1,"a2",a2,"a3",a3,"b1",b1,"b2",b2,"b3",b3,"c1",c1,"c2",c2,"c3",c3)
+                F2_e["eNodeB Cell"][phint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+
+                
+
+     
+## Checking the earfcn DL column
+    print('hi20')
+    sh2_earfcnDL=0  
+    ear_sh=F1[1]["earfcnDL"].unique()
+    print ("ear_sh",ear_sh)
+    print ("len(ear_sh)==max_carr",len(ear_sh)==max_carr)
+    ear="H"
+    earint=ear+str(k1+2)
+    if len(ear_sh)!=max_carr:
+        F2_e["eNodeB Cell"][earint]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        sh2_earfcnDL=1
+
+    l_ef=0;i=0
+    for i in range(0, (len(F5[0]["Cascade Id"]))):
+        if F1[0]["Cascade_ID"][0]==F5[0]["Cascade Id"][i]:
+            schd_k=F5[0]["Schedule Name"][i]
+
+    for i in range(0, (len(F3.loc[:,"S:Cascade ID"]))):
+        if (F1[0]["Cascade_ID"][0]==F3.loc[:,"S:Cascade ID"][i] and F3.loc[:,"RSEC:Band "][i]=="2500 MHz" and F3.loc[:,"AG:SMS Schedule Name"][i]==schd_k ):
+            l_ef=F3.loc[:,"RSEC:Channels"][i].split(",")
+    try:
+        print('l_ef',l_ef,len(l_ef))
+        exc=1
+        print('going for try')
+        print ("l_ef[0][:3]",l_ef[0][:3])
+        if l_ef[0][:3]=='L06'or l_ef[0][:3]=='L07' or l_ef[0][:3]=='L08':
+            exc=0
+            print ("exc0",exc)
+            print('try_l_ef',l_ef,len(l_ef))
+            earfcn=[];earfcn1=[]
+            for i in range(0,len(F6['dlEARFCN '].index)) :
+                    for j in range(0,len(l_ef)) :
+                        if F6['dlEARFCN '].index[i]==l_ef[j]:
+                            print((F6['dlEARFCN ']['20 MHz '][i]),'(F6[dlEARFCN][20 MHz][i])')
+                            earfcn.append(F6['dlEARFCN ']['20 MHz '][i])
+        
+            print("for loop2")
+            print ("earfcn",earfcn)
+            len_e=len(earfcn)
+            print("len(earfcn)",len_e)
+            for i in range(len_e):
+                print('loop 2 i')
+                
+                if exc==0:
+                    print ("/")
+                    a=earfcn[i].split('/')
+                    print (a[0],a[1])
+                    earfcn1.append(a[0])
+                    earfcn1.append(a[1])
+                    print('if')
+                    exc=0
+
+                else:
+                    exc=1
+                    print("else one")
+                    earfcn1.append(earfcn[i])
+
+
+        elif l_ef[0][0]=='L':
+            exc=2
+            print('try_l_ef',l_ef,len(l_ef))
+            earfcn=[];earfcn1=[]
+            for i in range(0,len(F6['dlEARFCN '].index)) :
+                    for j in range(0,len(l_ef)) :
+                        if F6['dlEARFCN '].index[i]==l_ef[j].strip():
+                            print((F6['dlEARFCN ']['20 MHz '][i]),'(F6[dlEARFCN][20 MHz][i])')
+                            earfcn.append(F6['dlEARFCN ']['20 MHz '][i])
+        
+            print("for loop2")
+            len_e=len(earfcn)
+            for i in range(len_e):
+                print('loop 2 i')
+                
+                if exc==0:
+                    print ("/")
+                    a=earfcn[i].split('/')
+                    print (a[0],a[1])
+                    earfcn1.append(a[0])
+                    earfcn1.append(a[1])
+                    print('if')
+                    exc=0
+                elif exc==2:
+                    print ("else o after")
+                    print (earfcn[i])
+                    earfcn1.append(earfcn[i])
+                else:
+                    exc=1
+                    print("else one")
+                    earfcn1.append(earfcn[i])
+
+        else:
+            print('else 2')
+            earfcn1=l_ef
+        match=max_carr
+        match1=0
+
+        print('for loop 3')
+        print ("len(ear_sh)",len(ear_sh))
+        #print ("len (earfcn1)",len(earfcn1))
+        print ("earfcn1",type(earfcn1))
+        for i in range(0,len(ear_sh)):
+            print("len(ear_sh)",len(ear_sh)) 
+            for j in range(0,len(earfcn1)):
+                print("len(earfcn1)",len(earfcn1),earfcn1)
+                print ("ear_sh[i]",(ear_sh[i]),"earfcn1[j]",(earfcn1[j]))
+                print ("ear_sh[i]=earfcn1[j]",(ear_sh[i])==(earfcn1[j]))
+                print ("Checking type",type(ear_sh[i]),type(earfcn1[j]))
+                print ("exc",exc)
+                if exc==1:
+                    if str(ear_sh[i])==earfcn1[j]:
+                        print ("condition")
+                        match1+=1
+                elif exc==2:
+                    if str(ear_sh[i])==str(earfcn1[j]):
+                        print ("condition")
+                        match1+=1                    
+                
+                else:
+                    if str(ear_sh[i])==earfcn1[j].strip():
+                        print ("checking old condition")
+                        match1+=1
+        print ("match",match,"match1",match1)
+        if match1>=match and sh2_earfcnDL!=1:
+            F2_e["eNodeB Cell"][earint]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eNodeB Cell"][earint]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    
+        print("last")
+            
+    except:
+        print ("encountered error")
+        F2_e["eNodeB Cell"][earint]="Cascade Missing in the database"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+        
+### Updating the TDD_Neighbor_DlEarfcn:
+    print('hi21')
+    zz="I"
+    zzint=zz+str(k1+2)
+    
+    sh2_fcn=0
+    for col in range(0,len(F1[1]["TDD_Neighbor_DlEarfcn"])):        
+        
+        if ((F1[1]["TDD_Neighbor_DlEarfcn"][col]) != (F1[1]["earfcnDL"][col])) and sh2_fcn!=1:
+            F2_e["eNodeB Cell"][zzint]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eNodeB Cell"][zzint]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            sh2_fcn=1
+    
+    
+    tot=len(F1[1]["TDD_Neighbor_DlEarfcn"])  ##Checking the symmetry part
+    if tot==1:
+        if max_sec ==1 and max_carr==1:
+            pass
+    if tot==2:
+        if max_sec ==1 and max_carr==2 and sh2_fcn!=1:
+            if F1[1]["TDD_Neighbor_DlEarfcn"][0]!=F1[1]["TDD_Neighbor_DlEarfcn"][1]:
+                F2_e["eNodeB Cell"][zzint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+            else:
+                F2_e["eNodeB Cell"][zzint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+        elif max_sec ==2 and max_carr==1 and sh2_fcn!=1:
+            if F1[1]["TDD_Neighbor_DlEarfcn"][0]==F1[1]["TDD_Neighbor_DlEarfcn"][1]:
+                F2_e["eNodeB Cell"][zzint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][zzint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+    if tot==3:
+        if max_sec ==1 and max_carr==3 and sh2_fcn!=1:
+            if F1[1]["TDD_Neighbor_DlEarfcn"][0]!=F1[1]["TDD_Neighbor_DlEarfcn"][1]!=F1[1]["TDD_Neighbor_DlEarfcn"][2]:
+                F2_e["eNodeB Cell"][zzint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][zzint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+        if max_sec ==3 and max_carr==1 and sh2_fcn!=1:
+            if F1[1]["TDD_Neighbor_DlEarfcn"][0]==F1[1]["TDD_Neighbor_DlEarfcn"][1]==F1[1]["TDD_Neighbor_DlEarfcn"][2]:
+                F2_e["eNodeB Cell"][zzint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][zzint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+    if tot==6:    
+        if max_sec ==2 and max_carr==3 and sh2_fcn!=1:
+            for col in range(0,len(F1[1]["TDD_Neighbor_DlEarfcn"])): 
+                if F1[1]["lnCellId"][col]==49:
+                    a1=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==57:
+                    a2=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==65:
+                    a3=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==50:
+                    b1=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==58:
+                    b2=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==66:
+                    b3=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+            if a1!=a2!=a3 and b1!=b2!=b3 and a1==b1 and a2==b2 and a3==b3:
+                F2_e["eNodeB Cell"][zzint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][zzint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+
+        if max_sec ==3 and max_carr==2 and sh2_fcn!=1:
+            for col in range(0,len(F1[1]["TDD_Neighbor_DlEarfcn"])): 
+                if F1[1]["lnCellId"][col]==49:
+                    a1=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==57:
+                    a2=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==50:
+                    b1=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==58:
+                    b2=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==51:
+                    c1=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==59:
+                    c2=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+            if a1!=a2 and b1!=b2 and c1!=c2 and a1==b1==c1 and a2==b2==c2:
+                F2_e["eNodeB Cell"][zzint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][zzint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+
+    if tot==9 or tot>9:
+        if ((max_sec ==3) and (max_carr==3)) and sh2_fcn!=1:
+            for col in range(9):
+                if F1[1]["lnCellId"][col]==49:
+                    a1=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==57:
+                    a2=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==65:
+                    a3=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==50:
+                    b1=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==58:
+                    b2=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==66:
+                    b3=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==51:
+                    c1=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==59:
+                    c2=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+                if F1[1]["lnCellId"][col]==67:
+                    c3=F1[1]["TDD_Neighbor_DlEarfcn"][col]
+
+            if a1!=a2!=a3 and b1!=b2!=b3 and c1!=c2!=c3 and a1==b1==c1:
+                F2_e["eNodeB Cell"][zzint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][zzint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+
+# Updating the dlBandwidth
+    print('hi23')
+    ql='J'
+    qlint=ql+str(k1+2)
+    if len((F1[1]['dlBandwidth']).unique())==1 and (F1[1]['dlBandwidth'][0])==20:
+        F2_e["eNodeB Cell"][qlint]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["eNodeB Cell"][qlint]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx") 
+
+# Updating the pMax
+    print('hi24')
+    gg='K'
+    ggint=gg+str(k1+2)
+    if len((F1[1]['pMax']).unique())==1 and (F1[1]['pMax'][0])==38.2 or (F1[1]['pMax'][0])==40:
+        F2_e["eNodeB Cell"][ggint]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["eNodeB Cell"][ggint]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+# Updating the dlMimoMode
+    print('hi25')
+    yy='L'
+    yyint=yy+str(k1+2)
+    if len((F1[1]['dlMimoMode']).unique())==1 and (F1[1]['dlMimoMode'][0])==30:
+        F2_e["eNodeB Cell"][yyint]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["eNodeB Cell"][yyint]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+### Updating the rootSeqIndex
+    print('hi26')
+    xx='M'
+    xxint=xx+str(k1+2)
+    if max_sec==1:
+        if len(F1[1]["cellName"].unique())==1 :
+            F2_e["eNodeB Cell"][xxint]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eNodeB Cell"][xxint]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+               
+    elif max_sec==2:
+        if len(F1[1]["cellName"].unique())==2 :
+            F2_e["eNodeB Cell"][xxint]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eNodeB Cell"][xxint]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+    elif max_sec==3:
+        if len(F1[1]["cellName"].unique())==3 :
+            F2_e["eNodeB Cell"][xxint]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eNodeB Cell"][xxint]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+            
+    tot=len(F1[1]["rootSeqIndex"])  ##Checking the symmetry part
+    if tot==1:
+        if max_sec ==1 and max_carr==1:
+            pass
+    if tot==2:
+        if max_sec ==1 and max_carr==2:
+            if F1[1]["rootSeqIndex"][0]==F1[1]["rootSeqIndex"][1]:
+                F2_e["eNodeB Cell"][xxint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][xxint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                            
+        elif max_sec ==2 and max_carr==1:
+            if F1[1]["rootSeqIndex"][0]!=F1[1]["rootSeqIndex"][1]:
+                F2_e["eNodeB Cell"][xxint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][xxint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                
+    if tot==3:
+        if max_sec ==1 and max_carr==3:
+            if F1[1]["rootSeqIndex"][0]==F1[1]["rootSeqIndex"][1]==F1[1]["rootSeqIndex"][2]:
+                F2_e["eNodeB Cell"][xxint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][xxint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                
+            if max_sec ==3 and max_carr==1:
+                if F1[1]["rootSeqIndex"][0]!=F1[1]["rootSeqIndex"][1]!=F1[1]["rootSeqIndex"][2]:
+                    F2_e["eNodeB Cell"][xxint]="OK"
+                    F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                else:
+                    F2_e["eNodeB Cell"][xxint]="NOK"
+                    F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                    
+    if tot==6:    
+        if max_sec ==2 and max_carr==3:
+            for col in range(0,len(F1[1]["rootSeqIndex"])): 
+                if F1[1]["lnCellId"][col]==49:
+                    a1=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==57:
+                    a2=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==65:
+                    a3=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==50:
+                    b1=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==58:
+                    b2=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==66:
+                    b3=F1[1]["rootSeqIndex"][col]
+            if a1==a2==a3 and b1==b2==b3 and a1!=b1 and a2!=b2 and a3!=b3:
+                F2_e["eNodeB Cell"][xxint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][xxint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+
+        if max_sec ==3 and max_carr==2:
+            for col in range(0,len(F1[1]["rootSeqIndex"])): 
+                if F1[1]["lnCellId"][col]==49:
+                    a1=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==57:
+                    a2=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==50:
+                    b1=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==58:
+                    b2=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==51:
+                    c1=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==59:
+                    c2=F1[1]["rootSeqIndex"][col]
+            if a1==a2 and b1==b2 and c1==c2 and a1!=b1!=c1 and a2!=b2!=c2:
+                F2_e["eNodeB Cell"][xxint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][xxint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+            
+    if tot==9 or tot>9:
+        if ((max_sec ==3) and (max_carr==3)):
+            for col in range(9):
+                if F1[1]["lnCellId"][col]==49:
+                    a1=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==57:
+                    a2=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==65:
+                    a3=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==50:
+                    b1=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==58:
+                    b2=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==66:
+                    b3=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==51:
+                    c1=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==59:
+                    c2=F1[1]["rootSeqIndex"][col]
+                if F1[1]["lnCellId"][col]==67:
+                    c3=F1[1]["rootSeqIndex"][col]
+
+            if a1==a2==a3 and b1==b2==b3 and c1==c2==c3 and a1!=b1!=c1:
+                F2_e["eNodeB Cell"][xxint]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eNodeB Cell"][xxint]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+#### SHEET 3(eCSFB Nbr) verification:::
+
+#updateing the lnCellId:
+    print('hi27')
+    vv1="A"
+    vv2="B"
+    vv1int=vv1+str(k1+2)
+    vv2int=vv2+str(k1+2)
+    F2_e["eCSFB Nbr"][vv1int]=F1[1]["Cascade_ID"][0]
+    F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    
+    lncol=[]
+    cellcol=[]
+    for col in range(0,len(F1[2]["lnCellId"])):        
+        if F1[2]["lnCellId"][col]==49 or F1[2]["lnCellId"][col]==50 or F1[2]["lnCellId"][col]==51:
+            lncol.append("1")
+        elif F1[2]["lnCellId"][col]==57 or F1[2]["lnCellId"][col]==58 or F1[2]["lnCellId"][col]==59:
+            lncol.append("2")
+        elif F1[2]["lnCellId"][col]==65 or F1[2]["lnCellId"][col]==66 or F1[2]["lnCellId"][col]==67:
+            lncol.append("3")
+    for col in range(0,len(F1[1]["cellName"])):        
+        if F1[1]["cellName"][col][-2:]=="17" or F1[1]["cellName"][col][-2:]=="27" or F1[1]["cellName"][col][-2:]=="37":
+            cellcol.append("1")
+        elif F1[1]["cellName"][col][-2:]=="18" or F1[1]["cellName"][col][-2:]=="28" or F1[1]["cellName"][col][-2:]=="38":
+            cellcol.append("2")
+        elif F1[1]["cellName"][col][-2:]=="19" or F1[1]["cellName"][col][-2:]=="29" or F1[1]["cellName"][col][-2:]=="39":
+            cellcol.append("3")
+    
+    for col in range(0,len(F1[2]["lnCellId"])):
+        
+        if lncol[col]==cellcol[col]:
+            F2_e["eCSFB Nbr"][vv2int]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eCSFB Nbr"][vv2int]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            break
+
+#updateing the Sector_ID:
+    print('hi28')
+    jj1="C"
+    jj1int=jj1+str(k1+2)
+    
+    mx_sh3=[]
+    nx_sh3=[]
+    for col in range(0,len(F1[1]["cellName"])):
+        mx_sh3.append(F1[1]["cellName"][col][-2])
+    max_sec=int(max(mx_sh3))
+    for col in range(0,len(F1[1]["cellName"])):
+        nx_sh3.append(F1[1]["cellName"][col][-1])
+    max_carr=len(set(nx_sh3))
+    if max_sec==1:
+        if len(F1[1]["cellName"].unique())==1 :
+            F2_e["eCSFB Nbr"][jj1int]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eCSFB Nbr"][jj1int]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+               
+    elif max_sec==2:
+        if len(F1[1]["cellName"].unique())==2 :
+            F2_e["eCSFB Nbr"][jj1int]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eCSFB Nbr"][jj1int]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+    elif max_sec==3:
+        if len(F1[1]["cellName"].unique())==3 :
+            F2_e["eCSFB Nbr"][jj1int]="OK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        else:
+            F2_e["eCSFB Nbr"][jj1int]="NOK"
+            F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+            
+    tot=len(F1[2]["Sector_ID"])  ##Checking the symmetry part
+    if tot==1:
+        if max_sec ==1 and max_carr==1:
+            pass
+    if tot==2:
+        if max_sec ==1 and max_carr==2:
+            if F1[2]["Sector_ID"][0]==F1[2]["Sector_ID"][1]:
+                F2_e["eCSFB Nbr"][jj1int]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eCSFB Nbr"][jj1int]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                            
+        elif max_sec ==2 and max_carr==1:
+            if F1[2]["Sector_ID"][0]!=F1[2]["Sector_ID"][1]:
+                F2_e["eCSFB Nbr"][jj1int]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eCSFB Nbr"][jj1int]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                
+    if tot==3:
+        if max_sec ==1 and max_carr==3:
+            if F1[2]["Sector_ID"][0]==F1[2]["Sector_ID"][1]==F1[2]["Sector_ID"][2]:
+                F2_e["eCSFB Nbr"][jj1int]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eCSFB Nbr"][jj1int]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                
+            if max_sec ==3 and max_carr==1:
+                if F1[2]["Sector_ID"][0]!=F1[2]["Sector_ID"][1]!=F1[2]["Sector_ID"][2]:
+                    F2_e["eCSFB Nbr"][jj1int]="OK"
+                    F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                else:
+                    F2_e["eCSFB Nbr"][jj1int]="NOK"
+                    F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+                    
+    if tot==6:    
+        if max_sec ==2 and max_carr==3:
+            for col in range(0,len(F1[2]["Sector_ID"])): 
+                if F1[2]["lnCellId"][col]==49:
+                    a1=F1[2]["Sector_ID"][col]
+                if F1[1]["lnCellId"][col]==57:
+                    a2=F1[2]["Sector_ID"][col]
+                if F1[1]["lnCellId"][col]==65:
+                    a3=F1[2]["Sector_ID"][col]
+                if F1[1]["lnCellId"][col]==50:
+                    b1=F1[2]["Sector_ID"][col]
+                if F1[1]["lnCellId"][col]==58:
+                    b2=F1[2]["Sector_ID"][col]
+                if F1[1]["lnCellId"][col]==66:
+                    b3=F1[2]["Sector_ID"][col]
+            if a1==a2==a3 and b1==b2==b3 and a1!=b1 and a2!=b2 and a3!=b3:
+                F2_e["eCSFB Nbr"][jj1int]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eCSFB Nbr"][jj1int]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+
+        if max_sec ==3 and max_carr==2:
+            for col in range(0,len(F1[2]["Sector_ID"])): 
+                if F1[2]["lnCellId"][col]==49:
+                    a1=F1[2]["Sector_ID"][col]
+                if F1[2]["lnCellId"][col]==57:
+                    a2=F1[2]["Sector_ID"][col]
+                if F1[2]["lnCellId"][col]==50:
+                    b1=F1[2]["Sector_ID"][col]
+                if F1[2]["lnCellId"][col]==58:
+                    b2=F1[2]["Sector_ID"][col]
+                if F1[2]["lnCellId"][col]==51:
+                    c1=F1[2]["Sector_ID"][col]
+                if F1[2]["lnCellId"][col]==59:
+                    c2=F1[2]["Sector_ID"][col]
+            if a1==a2 and b1==b2 and c1==c2 and a1!=b1!=c1 and a2!=b2!=c2:
+                F2_e["eCSFB Nbr"][jj1int]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eCSFB Nbr"][jj1int]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            
+            
+    if tot==9 or tot>9:
+        if ((max_sec ==3) and (max_carr==3)):
+            for col in range(9):
+                if F1[2]["lnCellId"][col]==49:
+                    a1=F1[2]["Sector_ID"][col]
+                if F1[2]["lnCellId"][col]==57:
+                    a2=F1[2]["Sector_ID"][col]
+                if F1[2]["lnCellId"][col]==65:
+                    a3=F1[2]["Sector_ID"][col]
+                if F1[2]["lnCellId"][col]==50:
+                    b1=F1[2]["Sector_ID"][col]
+                if F1[2]["lnCellId"][col]==58:
+                    b2=F1[2]["Sector_ID"][col]
+                if F1[2]["lnCellId"][col]==66:
+                    b3=F1[2]["Sector_ID"][col]
+                if F1[2]["lnCellId"][col]==51:
+                    c1=F1[2]["Sector_ID"][col]
+                if F1[2]["lnCellId"][col]==59:
+                    c2=F1[2]["Sector_ID"][col]
+                if F1[2]["lnCellId"][col]==67:
+                    c3=F1[2]["Sector_ID"][col]
+ 
+            if a1==a2==a3 and b1==b2==b3 and c1==c2==c3 and a1!=b1!=c1:
+                F2_e["eCSFB Nbr"][jj1int]="OK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+            else:
+                F2_e["eCSFB Nbr"][jj1int]="NOK"
+                F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+#CDMA_bandClass verification:
+    print('hi29')
+    bnd='D'
+    bndint=bnd+str(k1+2)
+    
+    if len((F1[2]["CDMA_bandClass"]).unique())==1 and (F1[2]["CDMA_bandClass"][0])=="bc1":
+        F2_e["eCSFB Nbr"][bndint]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["eCSFB Nbr"][bndint]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+#### SHEET 4(Addressing) verification:::
+
+#updateing the OAM_VLAN_5_IP_Address:
+    print('hi30')
+    sh4_IP_Address=0
+    add1="A"
+    add2="B"
+    add1int=add1+str(k1+2)
+    add2int=add2+str(k1+2)
+    F2_e["Addressing"][add1int]=F1[1]["Cascade_ID"][0]
+    F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    if (F1[4]["gateway2"][0]!=F1[4]["gateway3"][0]!=F1[4]["gateway4"][0]):
+        F2_e["Addressing"][add2int]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        sh4_IP_Address=1
+
+    gk1=(F1[4]["gateway2"][0].split('.'))
+    nl1=gk1[0]+"."+gk1[1]+"."+gk1[2]+"."+str(int(gk1[3])+3)
+    if nl1==F1[3]["OAM_VLAN_5_IP_Address"][0] and sh4_IP_Address!=1:
+        F2_e["Addressing"][add2int]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["Addressing"][add2int]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+        
+#updateing the OAM_VLAN_ID:
+    print('hi31')
+    vl='C'
+    vlint=vl+str(k1+2)
+    
+    if F1[3]['OAM_VLAN_ID'][0]==5:
+        F2_e["Addressing"][vlint]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["Addressing"][vlint]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")    
+        
+#updateing the Telecom_VLAN_4_IP_Address:
+    print('hi32')
+    tel1="D"
+    tel1int=tel1+str(k1+2)
+
+    sk1=(F1[4]["gateway1"][0].split('.'))
+    jl1=sk1[0]+"."+sk1[1]+"."+sk1[2]+"."+str(int(sk1[3])+3)
+    if jl1==F1[3]["Telecom_VLAN_4_IP_Address"][0]:
+        F2_e["Addressing"][tel1int]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["Addressing"][tel1int]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+        
+#updateing the Telecom_VLAN_ID:
+    print('hi33')
+    tvl='E'
+    tvlint=tvl+str(k1+2)
+    
+    if F1[3]['Telecom_VLAN_ID'][0]==4:
+        F2_e["Addressing"][tvlint]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["Addressing"][tvlint]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")    
+        
+#### SHEET 5(IpRouting) verification:::
+
+#updateing the gateway1:
+    print('hi34')
+    gat="A"
+    gat1="B"
+    gatint=gat+str(k1+2)
+    gat1int=gat1+str(k1+2)
+    F2_e["IpRouting"][gatint]=F1[1]["Cascade_ID"][0]
+    F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+    hq1=(F1[3]["Telecom_VLAN_4_IP_Address"][0].split('.'))
+    lop1=hq1[0]+"."+hq1[1]+"."+hq1[2]+"."+str(int(hq1[3])-3)
+    if lop1==F1[4]["gateway1"][0]:
+        F2_e["IpRouting"][gat1int]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["IpRouting"][gat1int]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+#updateing the gateway2:
+    print('hi35')
+    gat2="C"
+    gat2int=gat2+str(k1+2)
+    tp1=(F1[3]["OAM_VLAN_5_IP_Address"][0].split('.'))
+    loc1=tp1[0]+"."+tp1[1]+"."+tp1[2]+"."+str(int(tp1[3])-3)
+    if loc1==F1[4]["gateway2"][0]:
+        F2_e["IpRouting"][gat2int]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["IpRouting"][gat2int]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        
+#updateing the gateway3:
+    print('hi36')
+    gat3="D"
+    gat3int=gat3+str(k1+2)
+    tp2=(F1[3]["OAM_VLAN_5_IP_Address"][0].split('.'))
+    loc2=tp2[0]+"."+tp2[1]+"."+tp2[2]+"."+str(int(tp2[3])-3)
+    if loc2==F1[4]["gateway3"][0]:
+        F2_e["IpRouting"][gat3int]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["IpRouting"][gat3int]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+
+#updateing the gateway4:
+    print('hi37')
+    gat4="E"
+    gat4int=gat4+str(k1+2)
+    tp3=(F1[3]["OAM_VLAN_5_IP_Address"][0].split('.'))
+    loc3=tp3[0]+"."+tp3[1]+"."+tp3[2]+"."+str(int(tp3[3])-3)
+    if loc3==F1[4]["gateway4"][0]:
+        F2_e["IpRouting"][gat4int]="OK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+    else:
+        F2_e["IpRouting"][gat4int]="NOK"
+        F2_e.save(r"C:\CIQ_Audit\Airscale\Output.xlsx")
+        
+        

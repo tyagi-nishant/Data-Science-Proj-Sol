@@ -1,0 +1,4 @@
+cd..
+cd..
+C:\CIQ_Audit\Airscale
+pyinstaller -F C:\Users\etyanis\workspace\Project_CIQ\testing.py
