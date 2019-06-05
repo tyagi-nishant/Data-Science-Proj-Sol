@@ -1,0 +1,55 @@
+Python 3.6.0 (v3.6.0:41df79263a11, Dec 23 2016, 08:06:12) [MSC v.1900 64 bit (AM
+D64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import add_subtract
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ModuleNotFoundError: No module named 'add_subtract'
+>>> import sys
+>>> print sys.path
+  File "<stdin>", line 1
+    print sys.path
+            ^
+SyntaxError: Missing parentheses in call to 'print'
+>>> print (sys.path)
+['', 'C:\\Users\\etyanis\\AppData\\Local\\Programs\\Python\\Python36\\python36.z
+ip', 'C:\\Users\\etyanis\\AppData\\Local\\Programs\\Python\\Python36\\DLLs', 'C:
+\\Users\\etyanis\\AppData\\Local\\Programs\\Python\\Python36\\lib', 'C:\\Users\\
+etyanis\\AppData\\Local\\Programs\\Python\\Python36', 'C:\\Users\\etyanis\\AppDa
+ta\\Local\\Programs\\Python\\Python36\\lib\\site-packages']
+>>> len(sys.path)
+6
+>>> sys.path[0]="C:\Users\etyanis\Desktop\add-subtract\add_subtract"
+  File "<stdin>", line 1
+SyntaxError: (unicode error) 'unicodeescape' codec can't decode bytes in positio
+n 2-3: truncated \UXXXXXXXX escape
+>>> sys.path[0]="C:\\Users\\etyanis\\Desktop\\add-subtract\\add_subtract"
+>>> print (sys.path)
+['C:\\Users\\etyanis\\Desktop\\add-subtract\\add_subtract', 'C:\\Users\\etyanis\
+\AppData\\Local\\Programs\\Python\\Python36\\python36.zip', 'C:\\Users\\etyanis\
+\AppData\\Local\\Programs\\Python\\Python36\\DLLs', 'C:\\Users\\etyanis\\AppData
+\\Local\\Programs\\Python\\Python36\\lib', 'C:\\Users\\etyanis\\AppData\\Local\\
+Programs\\Python\\Python36', 'C:\\Users\\etyanis\\AppData\\Local\\Programs\\Pyth
+on\\Python36\\lib\\site-packages']
+>>> sys.path[0]="C:\\Users\\etyanis\\Desktop\\add-subtract"
+>>> print (sys.path)
+['C:\\Users\\etyanis\\Desktop\\add-subtract', 'C:\\Users\\etyanis\\AppData\\Loca
+l\\Programs\\Python\\Python36\\python36.zip', 'C:\\Users\\etyanis\\AppData\\Loca
+l\\Programs\\Python\\Python36\\DLLs', 'C:\\Users\\etyanis\\AppData\\Local\\Progr
+ams\\Python\\Python36\\lib', 'C:\\Users\\etyanis\\AppData\\Local\\Programs\\Pyth
+on\\Python36', 'C:\\Users\\etyanis\\AppData\\Local\\Programs\\Python\\Python36\\
+lib\\site-packages']
+>>> import add_subtract
+>>> dir (add_subtract)
+['__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__',
+'__package__', '__path__', '__spec__']
+>>> dir
+<built-in function dir>
+>>> dir (add_subtract)
+['__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__',
+'__package__', '__path__', '__spec__']
+>>> import add_subtract
+>>> dir (add_subtract)
+['__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__',
+'__package__', '__path__', '__spec__']
+>>> sys.path[0]="C:\\Users\\etyanis\\Desktop\\add-subtract"

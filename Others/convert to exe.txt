@@ -2,3 +2,13 @@ cd..
 cd..
 C:\CIQ_Audit\Airscale
 pyinstaller -F C:\Users\etyanis\workspace\Project_CIQ\testing.py
+
+
+-------pip install ipython------(If not already installed)
+
+ipython nbconvert --to script  LSM_Automation.ipynb
+or(ipython nbconvert --to script  LSM_Automation.ipynb)
+
+pip install ipython
+
+pyinstaller LSM_Automation.py
